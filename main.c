@@ -48,14 +48,9 @@ int main(int argc, char **argv) {
   }
 
   echo(samples, numSamples, alfa, offset);
+  
 
-  for(int i = 0; i < numSamples; i++){
-    if(samples[i] != copy[i]){
-      printf("Zmiana na pozycji %i\n", i);
-    }
-  }
-
-  FILE *newFile = fopen("new_xpp.wav", "wb");
+  FILE *newFile = fopen(filename, "wb");
   if (newFile == NULL) {
     printf("Nie udało się utworzyć nowego pliku\n");
     return 1;
