@@ -17,26 +17,16 @@ typedef struct {
   int dataSize;
 } WavHeader;
 
-void printHeader(WavHeader *header) {
-  printf("riff: %s\n", header->riff);
-  printf("chunkSize: %i\n", header->chunkSize);
-  printf("wave: %s\n", header->wave);
-  printf("fmt: %s\n", header->fmt);
-  printf("subchunk1Size: %i\n", header->subchunk1Size);
-  printf("audioFormat: %i\n", header->audioFormat);
-  printf("numChannels: %i\n", header->numChannels);
-  printf("sampleRate: %i\n", header->sampleRate);
-  printf("byteRate: %i\n", header->byteRate);
-  printf("blockAlign: %i\n", header->blockAlign);
-  printf("bitsPerSample: %i\n", header->bitsPerSample);
-  printf("data: %s\n", header->data);
-  printf("dataSize: %i\n", header->dataSize);
-}
-
 extern void echo(u_int16_t * arr_ptr, u_int32_t numSamples, float alfa, int offset);
 
-int main() {
-  FILE *file = fopen("example.wav", "rb");
+int main(int argc, char **argv) {
+
+  char filename[256];
+  snprintf(filename, sizeof(filename), "%s.wav", argv[1]);
+  float alfa = atof(argv[2]);
+  int offset = atoi(argv[3]);
+
+  FILE *file = fopen(filename, "rb");
   if (file == NULL) {
     printf("Could not open file\n");
     return 1;
@@ -45,22 +35,40 @@ int main() {
   fread(&header, sizeof(WavHeader), 1, file);
 
   u_int32_t numSamples = header.dataSize / (header.bitsPerSample / 8);
-  printf("%i", numSamples);
 
-  u_int16_t *samples = malloc(numSamples * sizeof(short)); //wskaźnik na tablicę
+  u_int16_t *samples = malloc(numSamples * sizeof(short));
 
-  // Odczyt próbek z pliku
   for (int i = 0; i < numSamples; i++) {
     fread(&samples[i], sizeof(short), 1, file);
   }
 
-  float alfa = .7f;
-  int offset = 7;
-
+  int copy[numSamples];
+  for (int i = 0; i < numSamples; ++i) {
+    copy[i] = samples[i];
+  }
 
   echo(samples, numSamples, alfa, offset);
 
+  for(int i = 0; i < numSamples; i++){
+    if(samples[i] != copy[i]){
+      printf("Zmiana na pozycji %i\n", i);
+    }
+  }
+
+  FILE *newFile = fopen("example.wav", "wb");
+  if (newFile == NULL) {
+    printf("Nie udało się utworzyć nowego pliku\n");
+    return 1;
+  }
+  fwrite(&header, sizeof(WavHeader), 1, newFile);
+
+  for (int i = 0; i < numSamples; i++) {
+    fwrite(&samples[i], sizeof(short), 1, newFile);
+  }
+
   free(samples);
+
   fclose(file);
+  fclose(newFile);
   return 0;
 }
