@@ -44,27 +44,27 @@ loop:
 
     xor ebx,ebx
     pextrw ebx, mm0, 0 ;wyciągnięcie pierwszego elementu
-    and ebx, 0x00FF ; wyzerowanie 16 najstarszych bitów
+    and ebx, 0xFFFF ; wyzerowanie 16 najstarszych bitów
     mov [edi], bx ;zapisanie wartości z powrotem do tablicy
 
     xor ebx,ebx
     pextrw ebx, mm0, 1
-    and ebx, 0x00FF
+    and ebx, 0xFFFF
     mov [edi+2], bx
 
     xor ebx,ebx
     pextrw ebx, mm0, 2
-    and ebx, 0x00FF
+    and ebx, 0xFFFF
     mov [edi+4], bx
 
     xor ebx,ebx
     pextrw ebx, mm0, 3
-    and ebx, 0x00FF
+    and ebx, 0xFFFF
     mov [edi+6], bx
 
-    add eax, 2
-    add edi, 2
-    sub ecx, 1
+    add eax, 8
+    add edi, 8
+    sub ecx, 4
     cmp ecx, 0
     jg loop ;
 

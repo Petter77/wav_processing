@@ -55,7 +55,7 @@ int main(int argc, char **argv) {
     }
   }
 
-  FILE *newFile = fopen("example.wav", "wb");
+  FILE *newFile = fopen("new_xpp.wav", "wb");
   if (newFile == NULL) {
     printf("Nie udało się utworzyć nowego pliku\n");
     return 1;
